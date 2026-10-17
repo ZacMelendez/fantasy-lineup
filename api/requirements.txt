@@ -1,0 +1,6 @@
+espn_api @ git+https://github.com/cwendt94/espn-api.git@cec2935d9d94a3ab88dd6eff0cf5a4fdc0e80d2f
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+numpy==2.2.2
+scipy==1.15.1
+httpx==0.28.1

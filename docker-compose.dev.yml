@@ -1,0 +1,26 @@
+# Hot reload for both services. Use with:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+services:
+  api:
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    volumes:
+      - ./api:/app
+      # Masks the host's macOS virtualenv so it is not visible inside the container.
+      # Dependencies come from the image's system site-packages, not from here.
+      - /app/.venv
+    ports:
+      - "8000:8000"
+
+  web:
+    build:
+      context: ./web
+      target: deps
+    command: ["npm", "run", "dev"]
+    working_dir: /app
+    environment:
+      INTERNAL_API_URL: http://api:8000
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - /app/.next

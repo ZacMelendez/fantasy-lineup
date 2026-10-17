@@ -1,0 +1,28 @@
+services:
+  api:
+    build:
+      context: ./api
+    environment:
+      ESPN_LEAGUE_ID: ${ESPN_LEAGUE_ID:?set ESPN_LEAGUE_ID in .env}
+      ESPN_YEAR: ${ESPN_YEAR:-2026}
+      ESPN_TEAM_ID: ${ESPN_TEAM_ID:-1}
+      ESPN_S2: ${ESPN_S2:-}
+      ESPN_SWID: ${ESPN_SWID:-}
+      CACHE_TTL_SECONDS: ${CACHE_TTL_SECONDS:-300}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+    environment:
+      # Resolves over the compose network, so the API needs no published port.
+      INTERNAL_API_URL: http://api:8000
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
